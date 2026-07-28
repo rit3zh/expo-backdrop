@@ -1,0 +1,25 @@
+const BLUR_TINTS = [
+  'default',
+  'extraLight',
+  'light',
+  'dark',
+  'regular',
+  'prominent',
+  'systemUltraThinMaterial',
+  'systemThinMaterial',
+  'systemMaterial',
+  'systemThickMaterial',
+  'systemChromeMaterial',
+  'systemUltraThinMaterialLight',
+  'systemThinMaterialLight',
+  'systemMaterialLight',
+  'systemThickMaterialLight',
+  'systemChromeMaterialLight',
+  'systemUltraThinMaterialDark',
+  'systemThinMaterialDark',
+  'systemMaterialDark',
+  'systemThickMaterialDark',
+  'systemChromeMaterialDark',
+] as const;
+
+export { BLUR_TINTS };
