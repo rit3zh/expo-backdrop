@@ -26,7 +26,6 @@ public enum TintStyle: String, Enumerable {
 
   func toBlurEffectStyle() -> UIBlurEffect.Style {
     #if os(tvOS)
-      // tvOS only ships the four legacy styles; every material collapses onto the nearest one.
       switch self {
       case .default, .regular, .systemUltraThinMaterial, .systemThinMaterial, .systemMaterial,
            .systemThickMaterial, .systemChromeMaterial:
