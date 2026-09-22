@@ -1,2 +1,2 @@
 export { isBlurTint } from './tint.utils';
-export { createWebUnsupportedError } from './platform.utils';
+export { createWebUnsupportedError, createAndroidUnsupportedError } from './platform.utils';

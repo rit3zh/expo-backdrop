@@ -1,1 +1,6 @@
-export type { TBlurTint, TNativeViewName, TComponentName } from './blur.types';
+export type {
+  TBlurTint,
+  TProgressiveBlurEdge,
+  TNativeViewName,
+  TComponentName,
+} from './blur.types';

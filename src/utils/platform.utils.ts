@@ -4,4 +4,8 @@ const createWebUnsupportedError = <T extends TComponentName>(componentName: T): 
   return new Error(`${componentName} is not available on the web platform.`);
 };
 
-export { createWebUnsupportedError };
+const createAndroidUnsupportedError = <T extends TComponentName>(componentName: T): Error => {
+  return new Error(`${componentName} is not available on Android yet.`);
+};
+
+export { createWebUnsupportedError, createAndroidUnsupportedError };
