@@ -2,190 +2,118 @@ https://github.com/user-attachments/assets/b8a424d1-ae20-49ae-add5-1e9f758d2922
 
 # expo-backdrop
 
-Native blur views for React Native + Expo.
-
-## Features
-
-- Two components: `BlurView` blurs what's _behind_ it, `GaussianBlurView` blurs its _own children_
-- All 21 iOS system materials (`systemThinMaterial`, `systemChromeMaterialDark`, …)
-- Custom `tintColor` when no system material fits your design
-- Per-corner radii that clip the blur _and_ its children
-- Android-specific dials for radius, downsampling, and pass count — so you can match iOS
-- Animatable props, works with Reanimated's `createAnimatedComponent`
+Native blur views for Expo, built on public iOS and Android APIs only.
 
 ## Installation
 
 ```bash
-bun install expo-backdrop
-```
-
-This module includes native iOS and Android code, so you need to prebuild and run on a device or simulator — Expo Go is not supported.
-
-```bash
+bunx expo install expo-backdrop
 bunx expo prebuild
-bunx expo run:ios
-bunx expo run:android
 ```
 
-> If you've already prebuilt your project, just re-run `expo run:ios` / `expo run:android` after installing.
+Needs a [development build](https://docs.expo.dev/develop/development-builds/introduction/). Expo Go is not supported.
 
-## Usage
+## Components
 
-```tsx
-import { BlurView, GaussianBlurView } from 'expo-backdrop';
-```
+| Component             | Blurs                                                  |
+| --------------------- | ------------------------------------------------------ |
+| `BlurView`            | What's behind it                                       |
+| `GaussianBlurView`    | Its own children                                       |
+| `ProgressiveBlurView` | What's behind it, fading from one edge to the opposite |
 
-## Quick Start
+All components accept `style` and `children`.
+
+## `BlurView`
 
 ```tsx
 import { BlurView } from 'expo-backdrop';
-import { Image, Text, View } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={{ flex: 1 }}>
-      <Image source={require('./cover.png')} style={{ ...StyleSheet.absoluteFillObject }} />
-
-      <BlurView
-        intensity={80}
-        tint="systemThinMaterialDark"
-        cornerRadius={24}
-        style={{ margin: 20, padding: 20 }}>
-        <Text style={{ color: '#fff' }}>Hello from behind the glass</Text>
-      </BlurView>
-    </View>
-  );
-}
+<BlurView intensity={80} tint="systemThinMaterialDark" cornerRadius={24} />;
 ```
 
-## API
+| Prop           | Type                  | Default     | Description                                                                |
+| -------------- | --------------------- | ----------- | -------------------------------------------------------------------------- |
+| `intensity`    | `number`              | `50`        | Blur strength, `0`–`100`                                                   |
+| `tint`         | `BlurTint`            | `'default'` | Material applied over the blur                                             |
+| `tintColor`    | `ColorValue`          | —           | Custom colour over the blur; replaces `tint` when set                      |
+| `blurEnabled`  | `boolean`             | `true`      | `false` renders only the tint                                              |
+| `cornerRadius` | `number`              | —           | Uniform radius; clips the blur and its children                            |
+| `cornerRadii`  | `BlurViewCornerRadii` | —           | `{ topLeft, topRight, bottomRight, bottomLeft }`; overrides `cornerRadius` |
 
-### `<BlurView>`
+**Android only**
 
-Blurs whatever is rendered behind it. Use it for headers, tab bars, floating action bars — anywhere you'd reach for a system material.
+| Prop                  | Type      | Default | Description                                                             |
+| --------------------- | --------- | ------- | ----------------------------------------------------------------------- |
+| `blurReductionFactor` | `number`  | `4`     | Divides the radius `intensity` maps to; use it to match iOS             |
+| `blurRadius`          | `number`  | —       | Explicit radius in dp; overrides `intensity`                            |
+| `downsampleFactor`    | `number`  | `0`     | Downsampling before blurring; higher is cheaper and softer, `0` is auto |
+| `blurRounds`          | `number`  | `2`     | Blur passes per capture; more is softer                                 |
+| `autoUpdate`          | `boolean` | `true`  | `false` freezes the backdrop over static content                        |
 
-| Prop           | Type          | Default     | Description                                       |
-| -------------- | ------------- | ----------- | ------------------------------------------------- |
-| `intensity`    | `number`      | `50`        | Blur strength, `0`–`100`                          |
-| `tint`         | `BlurTint`    | `"default"` | System material washed over the blur              |
-| `tintColor`    | `ColorValue`  | —           | Custom colour; replaces `tint` when set           |
-| `blurEnabled`  | `boolean`     | `true`      | Set to `false` to render only the tint            |
-| `cornerRadius` | `number`      | —           | Uniform radius; clips the blur and its children   |
-| `cornerRadii`  | `CornerRadii` | —           | Per-corner radii; takes precedence over the above |
-| `style`        | `ViewStyle`   | —           | Style applied to the view                         |
-
-#### Android-only props
-
-iOS has no equivalent for these — `UIVisualEffectView` fixes the blur radius per material, and the compositor keeps the backdrop live for free.
-
-| Prop                  | Type      | Default | Description                                                                  |
-| --------------------- | --------- | ------- | ---------------------------------------------------------------------------- |
-| `blurReductionFactor` | `number`  | `4`     | Divides the radius `intensity` maps to — the dial for matching iOS           |
-| `blurRadius`          | `number`  | —       | Explicit radius in dp, overriding `intensity`                                |
-| `downsampleFactor`    | `number`  | `0`     | Downsampling before blurring; higher is cheaper and softer, `0` auto-derives |
-| `blurRounds`          | `number`  | `2`     | Blur passes per capture; more passes soften further                          |
-| `autoUpdate`          | `boolean` | `true`  | Set to `false` to freeze the backdrop over static content                    |
-
-### `<GaussianBlurView>`
-
-Blurs its own children, mirroring SwiftUI's `.blur(radius:opaque:)`.
-
-| Prop         | Type        | Default | Description                                                                       |
-| ------------ | ----------- | ------- | --------------------------------------------------------------------------------- |
-| `blurRadius` | `number`    | `0`     | Blur strength — points on iOS, dp on Android                                      |
-| `opaque`     | `boolean`   | `false` | `false` lets edges fade out (the signature `.blur` look); `true` keeps them solid |
-| `style`      | `ViewStyle` | —       | Style applied to the view                                                         |
+## `GaussianBlurView`
 
 ```tsx
 import { GaussianBlurView } from 'expo-backdrop';
 
 <GaussianBlurView blurRadius={12}>
-  <Image source={require('./cover.png')} style={{ width: 300, height: 200 }} />
+  <Image source={cover} style={{ width: 300, height: 200 }} />
 </GaussianBlurView>;
 ```
 
-## Tints
+| Prop         | Type      | Default | Description                                          |
+| ------------ | --------- | ------- | ---------------------------------------------------- |
+| `blurRadius` | `number`  | `0`     | Blur strength, in points on iOS and dp on Android    |
+| `opaque`     | `boolean` | `false` | `false` fades the edges out; `true` keeps them solid |
 
-`BlurTint` accepts any of the following:
+Matches SwiftUI's `.blur(radius:opaque:)`. Requires Android 12 (API 31)+.
 
-| Group      | Values                                                                                                           |
-| ---------- | ---------------------------------------------------------------------------------------------------------------- |
-| Legacy     | `default`, `extraLight`, `light`, `dark`, `regular`, `prominent`                                                 |
-| Materials  | `systemUltraThinMaterial`, `systemThinMaterial`, `systemMaterial`, `systemThickMaterial`, `systemChromeMaterial` |
-| Light/Dark | Each material above with a `Light` or `Dark` suffix — e.g. `systemThinMaterialDark`                              |
-
-## Corner Radii
-
-Pass `cornerRadius` for a uniform radius, or `cornerRadii` to shape individual corners. Both clip the blur layer _and_ the children, so you don't need a separate `overflow: 'hidden'` wrapper.
+## `ProgressiveBlurView`
 
 ```tsx
-<BlurView
-  intensity={70}
-  cornerRadii={{ topLeft: 24, topRight: 24, bottomLeft: 0, bottomRight: 0 }}
-/>
+import { ProgressiveBlurView } from 'expo-backdrop';
+
+<ProgressiveBlurView
+  edge="top"
+  style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 120, pointerEvents: 'none' }}
+/>;
 ```
 
-## Full Example
+| Prop             | Type                  | Default                     | Description                                                             |
+| ---------------- | --------------------- | --------------------------- | ----------------------------------------------------------------------- |
+| `edge`           | `ProgressiveBlurEdge` | `'top'`                     | `'top'`, `'bottom'`, `'left'` or `'right'`; where the blur is strongest |
+| `intensity`      | `number`              | `50`                        | Strength at the blurred edge, `0`–`100`                                 |
+| `startOffset`    | `number`              | `0`                         | Fraction `0`–`1` from `edge` held at full strength before fading        |
+| `tint`           | `BlurTint`            | `'systemUltraThinMaterial'` | Material the blur uses                                                  |
+| `tintColor`      | `ColorValue`          | page background at 85%      | Wash rising to the blurred edge; `'transparent'` turns it off           |
+| `scrollFallback` | `boolean`             | `true`                      | Swaps to a gradient while the scroll view behind moves fast             |
+| `fallbackColor`  | `ColorValue`          | page background             | Colour of that gradient                                                 |
 
-A floating action bar that fades its blur in as the user scrolls:
+It finds the scroll view behind it automatically and fades in once content scrolls under its edge, like iOS 26's scroll edge effect. Set `pointerEvents: 'none'` so touches reach the content underneath.
 
-```tsx
-import { BlurView } from 'expo-backdrop';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
+## `BlurTint`
 
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-
-export default function Screen() {
-  const scrollY = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler((event) => {
-    scrollY.value = event.contentOffset.y;
-  });
-
-  const style = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.value, [0, 300], [0, 1], Extrapolation.CLAMP),
-  }));
-
-  return (
-    <>
-      <Animated.ScrollView onScroll={scrollHandler} scrollEventThrottle={16}>
-        {/* … */}
-      </Animated.ScrollView>
-
-      <AnimatedBlurView
-        intensity={90}
-        tint="systemChromeMaterialDark"
-        cornerRadius={28}
-        style={[{ position: 'absolute', bottom: 40, left: 20, right: 20, height: 80 }, style]}
-      />
-    </>
-  );
-}
-```
+- `default`, `extraLight`, `light`, `dark`, `regular`, `prominent`
+- `systemUltraThinMaterial`, `systemThinMaterial`, `systemMaterial`, `systemThickMaterial`, `systemChromeMaterial`
+- Each material with a `Light` or `Dark` suffix, e.g. `systemThinMaterialDark`
 
 ## Types
 
 ```ts
 import type {
   BlurViewProps,
-  GaussianBlurViewProps,
   BlurViewCornerRadii,
+  GaussianBlurViewProps,
+  ProgressiveBlurViewProps,
+  ProgressiveBlurEdge,
   BlurTint,
 } from 'expo-backdrop';
 ```
 
-## Requirements
+## Platforms
 
-- Expo SDK with a [development build](https://docs.expo.dev/develop/development-builds/introduction/) or bare workflow (Expo Go is **not** supported)
-- iOS 13+ — `BlurView` and `GaussianBlurView`
-- Android — `BlurView` on all supported versions, `GaussianBlurView` requires API 31 (Android 12)+
-- Web is not supported; both components throw if rendered there
+- **iOS** 13+
+- **Android**: all components; `GaussianBlurView` needs API 31+
+- **Web**: not supported; components throw
 
 ## License
 
