@@ -51,5 +51,35 @@ public class BlurViewModule: Module {
         view.opaqueBlur = opaque ?? false
       }
     }
+
+    View(ProgressiveBlurView.self) {
+      Prop("intensity") { (view: ProgressiveBlurView, intensity: Double?) in
+        view.intensity = intensity ?? 50
+      }
+
+      Prop("tint") { (view: ProgressiveBlurView, tint: TintStyle?) in
+        view.tint = tint ?? .systemUltraThinMaterial
+      }
+
+      Prop("tintColor") { (view: ProgressiveBlurView, tintColor: UIColor?) in
+        view.blurTintColor = tintColor
+      }
+
+      Prop("edge") { (view: ProgressiveBlurView, edge: ProgressiveBlurEdge?) in
+        view.edge = edge ?? .top
+      }
+
+      Prop("startOffset") { (view: ProgressiveBlurView, offset: Double?) in
+        view.startOffset = offset ?? 0
+      }
+
+      Prop("scrollFallback") { (view: ProgressiveBlurView, enabled: Bool?) in
+        view.scrollFallback = enabled ?? true
+      }
+
+      Prop("fallbackColor") { (view: ProgressiveBlurView, color: UIColor?) in
+        view.fallbackColor = color
+      }
+    }
   }
 }
