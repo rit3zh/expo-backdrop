@@ -18,5 +18,6 @@ android {
 }
 
 dependencies {
+  implementation 'com.facebook.react:react-android'
   api 'com.qmdeve.blurview:core:1.3.0'
 }

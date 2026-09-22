@@ -2,10 +2,12 @@ package expo.modules.blurview
 
 import android.graphics.Color
 import android.view.View
+import expo.modules.blurview.enums.ProgressiveBlurEdge
 import expo.modules.blurview.enums.TintStyle
 import expo.modules.blurview.records.CornerRadii
 import expo.modules.blurview.views.BlurView
 import expo.modules.blurview.views.GaussianBlurView
+import expo.modules.blurview.views.ProgressiveBlurView
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import expo.modules.kotlin.types.ColorCompat
@@ -99,6 +101,54 @@ class BlurViewModule : Module() {
 
       OnViewDidUpdateProps { view: GaussianBlurView ->
         view.reapplyBlurEffect()
+      }
+    }
+
+    View(ProgressiveBlurView::class) {
+      GroupView<ProgressiveBlurView> {
+        AddChildView { parent: ProgressiveBlurView, child: View, index: Int ->
+          parent.addView(child, index + ProgressiveBlurView.RESERVED_CHILDREN)
+        }
+        GetChildCount { view: ProgressiveBlurView ->
+          (view.childCount - ProgressiveBlurView.RESERVED_CHILDREN).coerceAtLeast(0)
+        }
+        GetChildViewAt { view: ProgressiveBlurView, index: Int ->
+          view.getChildAt(index + ProgressiveBlurView.RESERVED_CHILDREN)
+        }
+        RemoveChildViewAt { view: ProgressiveBlurView, index: Int ->
+          view.removeViewAt(index + ProgressiveBlurView.RESERVED_CHILDREN)
+        }
+        RemoveChildView { view: ProgressiveBlurView, child: View ->
+          view.removeView(child)
+        }
+      }
+
+      Prop("intensity") { view: ProgressiveBlurView, intensity: Float? ->
+        view.intensity = intensity ?: ProgressiveBlurView.DEFAULT_INTENSITY
+      }
+
+      Prop("tint") { view: ProgressiveBlurView, tint: TintStyle? ->
+        view.tint = tint ?: TintStyle.SYSTEM_ULTRA_THIN_MATERIAL
+      }
+
+      Prop("tintColor") { view: ProgressiveBlurView, tintColor: Color? ->
+        view.blurTintColor = tintColor?.let { ColorCompat.toArgb(it) }
+      }
+
+      Prop("edge") { view: ProgressiveBlurView, edge: ProgressiveBlurEdge? ->
+        view.edge = edge ?: ProgressiveBlurEdge.TOP
+      }
+
+      Prop("startOffset") { view: ProgressiveBlurView, offset: Float? ->
+        view.startOffset = offset ?: 0f
+      }
+
+      Prop("scrollFallback") { view: ProgressiveBlurView, enabled: Boolean? ->
+        view.scrollFallback = enabled ?: true
+      }
+
+      Prop("fallbackColor") { view: ProgressiveBlurView, color: Color? ->
+        view.fallbackColor = color?.let { ColorCompat.toArgb(it) }
       }
     }
   }
