@@ -25,9 +25,9 @@
     },
     "plugins": [
       "react-native-video",
-      "expo-video",
       "expo-font",
-      "expo-image"
+      "expo-image",
+      "expo-status-bar"
     ]
   }
 }
