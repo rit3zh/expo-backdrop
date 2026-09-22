@@ -1,6 +1,6 @@
 {
   "name": "expo-backdrop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Testing for now.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
