@@ -10,7 +10,6 @@ import expo.modules.blurview.views.GaussianBlurView
 import expo.modules.blurview.views.ProgressiveBlurView
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.types.ColorCompat
 
 class BlurViewModule : Module() {
   override fun definition() = ModuleDefinition {
@@ -60,7 +59,7 @@ class BlurViewModule : Module() {
       }
 
       Prop("tintColor") { view: BlurView, tintColor: Color? ->
-        view.tintColor = tintColor?.let { ColorCompat.toArgb(it) } ?: Color.TRANSPARENT
+        view.tintColor = tintColor?.let { it.toArgb() } ?: Color.TRANSPARENT
       }
 
       Prop("blurEnabled") { view: BlurView, enabled: Boolean? ->
@@ -132,7 +131,7 @@ class BlurViewModule : Module() {
       }
 
       Prop("tintColor") { view: ProgressiveBlurView, tintColor: Color? ->
-        view.blurTintColor = tintColor?.let { ColorCompat.toArgb(it) }
+        view.blurTintColor = tintColor?.let { it.toArgb() }
       }
 
       Prop("edge") { view: ProgressiveBlurView, edge: ProgressiveBlurEdge? ->
@@ -148,7 +147,7 @@ class BlurViewModule : Module() {
       }
 
       Prop("fallbackColor") { view: ProgressiveBlurView, color: Color? ->
-        view.fallbackColor = color?.let { ColorCompat.toArgb(it) }
+        view.fallbackColor = color?.let { it.toArgb() }
       }
     }
   }
