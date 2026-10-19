@@ -1,6 +1,6 @@
 import ExpoModulesCore
 
-public class BlurViewModule: Module {
+public class BackdropBlurViewModule: Module {
   public func definition() -> ModuleDefinition {
     Name("BlurView")
 
